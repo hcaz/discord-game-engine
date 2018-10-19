@@ -1,6 +1,8 @@
 import os
 import discord
 import asyncio
+import random
+import string
 
 client = discord.Client()
 
@@ -11,13 +13,19 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
+
 @client.event
 async def on_message(message):
     if message.content.startswith('game'):
         client.send_typing(message.channel)
         intent = message.content[5:].split()
         if intent[0].startswith('start'):
-            await client.send_message(message.channel, 'Starting game - ' + intent[1])
+            if(intent[1].startswith('tic-tac-toe')):
+                await client.send_message(message.channel, 'Starting game - ' + intent[1])
+                name = 'GAME-'.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(2))
+                await client.create_channel(message.channel.server, name, type=discord.ChannelType.text)
+            else:
+                await client.send_message(message.channel, 'This game does not exist')
         elif intent[0].startswith('types'):
             embed=discord.Embed(title="Game Types", description="Below is a list of game types available", color=0xa709ff)
             embed.set_author(name="Game Engine", url="https://github.com/hcaz/discord-game-engine", icon_url="https://api.adorable.io/avatars/285/" + message.author.name)
