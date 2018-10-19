@@ -24,10 +24,24 @@ async def on_message(message):
                 if len(intent) > 2:
                     server = message.channel.server
                     friend = intent[2]
+                    player = message.author
                     await client.send_message(message.channel, 'Starting a game ' + intent[1])
                     name = 'GAME-'.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(2))
                     channel = await client.create_channel(server, name, type=discord.ChannelType.text)
-                    await client.send_message(channel, 'Welcome ' + message.author + ', and ' + friend + ' to a new game of ' + intent[1])
+                    await client.send_message(channel, 'Welcome ' + player.mention + ', and ' + friend + ' to a new game of ' + intent[1])
+
+                    await client.send_message(channel, ':heart_decoration: :regional_indicator_a: :regional_indicator_b: :regional_indicator_c:')
+                    await client.send_message(channel, ':one: :white_large_square: :white_large_square: :white_large_square:')
+                    await client.send_message(channel, ':two: :white_large_square: :white_large_square: :white_large_square:')
+                    await client.send_message(channel, ':three: :white_large_square: :white_large_square: :white_large_square:')
+
+                    await client.send_message(channel, 'Type $stop 4 times.')
+                    for i in range(4):
+                        msg = await client.wait_for_message(author=player, content='$stop')
+                        fmt = '{} left to go...'
+                        await client.send_message(channel, fmt.format(3 - i))
+
+                    await client.send_message(channel, 'Good job!')
                 else:
                     await client.send_message(message.channel, 'That user does not exist')
             else:
