@@ -20,10 +20,16 @@ async def on_message(message):
         client.send_typing(message.channel)
         intent = message.content[5:].split()
         if intent[0].startswith('start'):
-            if(intent[1].startswith('tic-tac-toe')):
-                await client.send_message(message.channel, 'Starting game - ' + intent[1])
-                name = 'GAME-'.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(2))
-                await client.create_channel(message.channel.server, name, type=discord.ChannelType.text)
+            if intent[1].startswith('tic-tac-toe'):
+                if len(intent) > 2:
+                    server = message.channel.server
+                    friend = intent[2]
+                    await client.send_message(message.channel, 'Starting a game ' + intent[1])
+                    name = 'GAME-'.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(2))
+                    channel = await client.create_channel(server, name, type=discord.ChannelType.text)
+                    await client.send_message(channel, 'Welcome ' + message.author + ', and ' + friend + ' to a new game of ' + intent[1])
+                else:
+                    await client.send_message(message.channel, 'That user does not exist')
             else:
                 await client.send_message(message.channel, 'This game does not exist')
         elif intent[0].startswith('types'):
@@ -40,7 +46,6 @@ async def on_message(message):
             embed.set_author(name="Game Engine", url="https://github.com/hcaz/discord-game-engine", icon_url="https://api.adorable.io/avatars/285/" + message.author.name)
             embed.set_thumbnail(url="https://image.flaticon.com/icons/svg/148/148769.svg")
             embed.add_field(name="types", value="Lists all available game types", inline=False)
-            embed.add_field(name="start {type}", value="Starts a new game", inline=False)
             embed.add_field(name="start {type} {user}", value="Starts a new game with a specific user", inline=True)
             embed.set_footer(text="For more help, visit the discord!")
             await client.send_message(message.channel, embed=embed)
